@@ -3,15 +3,9 @@ import pandas as pd
 import numpy as np
 #import plotly.express as px
 #import openpyxl
-import openai
 import os
 from io import BytesIO
 from datetime import datetime
-
-# =============================
-# KONFIGURASI API OPENAI
-# =============================
-openai.api_key = os.getenv("OPENAI_API_KEY") or st.secrets.get("OPENAI_API_KEY")
 
 # ====== CONFIG PAGE ======
 st.set_page_config(
@@ -707,37 +701,6 @@ if not df_filtered.empty:
 else:
     st.warning("⚠️ Tidak ada data untuk diexport. Sesuaikan filter atau reset pengaturan.", icon="⚠️")
 
-# =============================
-# FITUR ANALISIS DENGAN CHATGPT
-# =============================
-st.subheader("💬 Analisis Data dengan AI")
-user_prompt = st.text_area("Masukkan pertanyaan tentang data Anda:")
-
-if st.button("Analisis dengan ChatGPT"):
-    if not uploaded_files:
-        st.warning("Harap unggah data terlebih dahulu.")
-    elif not openai.api_key:
-        st.error("API Key OpenAI belum diset. Tambahkan di Streamlit Secrets.")
-    else:
-        try:
-            # Ambil sample data (maks 100 baris) untuk dikirim ke AI
-            sample_df = dfs[0].head(100).to_csv(index=False)
-            full_prompt = f"""
-            Berikut adalah sample data CSV:
-            {sample_df}
-
-            Pertanyaan:
-            {user_prompt}
-            """
-            response = openai.chat.completions.create(
-                model="gpt-4o-mini",
-                messages=[{"role": "user", "content": full_prompt}],
-                max_tokens=500
-            )
-            st.write("**Jawaban AI:**")
-            st.write(response.choices[0].message["content"])
-        except Exception as e:
-            st.error(f"Gagal memproses analisis AI: {e}")
 
     # Footer
 st.markdown("""
