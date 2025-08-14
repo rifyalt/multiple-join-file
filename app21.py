@@ -1,6 +1,6 @@
 import pandas as pd
 import streamlit as st
-import plotly.express as px
+#import plotly.express as px
 import openai
 from io import BytesIO
 from datetime import datetime
