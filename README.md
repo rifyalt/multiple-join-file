@@ -1,8 +1,16 @@
-# Multiple Join File App
+# Naratix Data Integration Platform
 
-Aplikasi Streamlit untuk menggabungkan data Excel dari beberapa sumber.
+Aplikasi berbasis Streamlit untuk menggabungkan (join) beberapa file Excel dan melakukan filtering data dengan mudah.
 
-## Cara Menjalankan Lokal
-```bash
-pip install -r requirements.txt
-streamlit run app21.py
+## 🚀 Fitur
+- Upload multiple file Excel (.xlsx, .xls)
+- Mapping otomatis lebih dari 80 kolom
+- Pembersihan data & penggabungan berdasarkan Booking ID
+- Filter berdasarkan kata kunci, tanggal, agen, hotel
+- Export hasil ke Excel atau CSV
+
+## 📦 Instalasi Lokal
+1. Clone repository:
+   ```bash
+   git clone https://github.com/username/repo.git
+   cd repo
