@@ -1,9 +1,18 @@
-import pandas as pd
 import streamlit as st
-#import plotly.express as px
+import pandas as pd
+import numpy as np
+import plotly.express as px
+import openpyxl
+import os
 import openai
+import os
 from io import BytesIO
 from datetime import datetime
+
+# =============================
+# KONFIGURASI API OPENAI
+# =============================
+openai.api_key = os.getenv("OPENAI_API_KEY") or st.secrets.get("OPENAI_API_KEY")
 
 # ====== CONFIG PAGE ======
 st.set_page_config(
@@ -699,42 +708,37 @@ if not df_filtered.empty:
 else:
     st.warning("⚠️ Tidak ada data untuk diexport. Sesuaikan filter atau reset pengaturan.", icon="⚠️")
 
-#============== ChatGPT ==============#
+# =============================
+# FITUR ANALISIS DENGAN CHATGPT
+# =============================
+st.subheader("💬 Analisis Data dengan AI")
+user_prompt = st.text_area("Masukkan pertanyaan tentang data Anda:")
 
-st.markdown("### 🤖 AI Data Assistant")
-st.markdown("Ajukan pertanyaan terkait data yang sudah di-load, dan AI akan membantu menganalisis.")
+if st.button("Analisis dengan ChatGPT"):
+    if not uploaded_files:
+        st.warning("Harap unggah data terlebih dahulu.")
+    elif not openai.api_key:
+        st.error("API Key OpenAI belum diset. Tambahkan di Streamlit Secrets.")
+    else:
+        try:
+            # Ambil sample data (maks 100 baris) untuk dikirim ke AI
+            sample_df = dfs[0].head(100).to_csv(index=False)
+            full_prompt = f"""
+            Berikut adalah sample data CSV:
+            {sample_df}
 
-chat_prompt = st.text_area("Tanyakan sesuatu...", placeholder="Contoh: 'Berapa rata-rata tagihan per hotel?'")
-api_key = st.secrets.get("OPENAI_API_KEY", "")
-
-if api_key == "":
-    st.warning("⚠️ Masukkan API Key OpenAI di file `secrets.toml` untuk mengaktifkan fitur ini.")
-else:
-    if st.button("Kirim Pertanyaan"):
-        if not df_filtered.empty and chat_prompt.strip():
-            # Konversi sebagian data menjadi konteks
-            sample_data = df_filtered.head(20).to_csv(index=False)
-            system_msg = "Anda adalah analis data profesional. Jawab pertanyaan user berdasarkan data yang diberikan sesuai dengan data yang ada jangan ada kesalahan, ingat semua pertanyaan yang pernah diajukan."
-            user_msg = f"Data:\n{sample_data}\n\nPertanyaan: {chat_prompt}"
-            
-            try:
-                import openai
-                openai.api_key = api_key
-                response = openai.ChatCompletion.create(
-                    model="gpt-4o-mini",
-                    messages=[
-                        {"role": "system", "content": system_msg},
-                        {"role": "user", "content": user_msg}
-                    ],
-                    temperature=0.4,
-                    max_tokens=500
-                )
-                answer = response.choices[0].message.content
-                st.markdown(f"**💡 Jawaban AI:**\n\n{answer}")
-            except Exception as e:
-                st.error(f"Terjadi kesalahan saat memanggil API: {e}")
-        else:
-            st.warning("⚠️ Data kosong atau pertanyaan tidak valid.")
+            Pertanyaan:
+            {user_prompt}
+            """
+            response = openai.chat.completions.create(
+                model="gpt-4o-mini",
+                messages=[{"role": "user", "content": full_prompt}],
+                max_tokens=500
+            )
+            st.write("**Jawaban AI:**")
+            st.write(response.choices[0].message["content"])
+        except Exception as e:
+            st.error(f"Gagal memproses analisis AI: {e}")
 
     # Footer
 st.markdown("""
