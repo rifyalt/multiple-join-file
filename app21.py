@@ -3,7 +3,6 @@ import pandas as pd
 import numpy as np
 #import plotly.express as px
 #import openpyxl
-import os
 import openai
 import os
 from io import BytesIO
