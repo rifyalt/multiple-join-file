@@ -1,10 +1,11 @@
 import streamlit as st
 import pandas as pd
 import numpy as np
+#import plotly.express as px
+#import openpyxl
 import os
 from io import BytesIO
 from datetime import datetime
-import openpyxl  # Added openpyxl import
 
 # ====== CONFIG PAGE ======
 st.set_page_config(
@@ -308,7 +309,7 @@ file_status = []
 
 for i, f in enumerate(file_utama_list):
     try:
-        df = pd.read_excel(f, engine='openpyxl') # Ensure openpyxl is used
+        df = pd.read_excel(f)
         file_status.append(f"✅ {f.name}")
         #st.success(f"✅ File berhasil diproses: **{f.name}** ({len(df):,} records)")
     except Exception as e:
@@ -365,7 +366,7 @@ df_data_list = []
 data_cols_sets = []
 for f in file_data:
     try:
-        df = pd.read_excel(f, engine='openpyxl') # Ensure openpyxl is used
+        df = pd.read_excel(f)
         # Normalisasi kolom
         df = normalize_and_rename(df)
         df_data_list.append(df)
