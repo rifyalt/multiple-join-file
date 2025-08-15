@@ -2,7 +2,7 @@ import streamlit as st
 import pandas as pd
 import numpy as np
 #import plotly.express as px
-#import openpyxl
+import openpyxl
 import os
 from io import BytesIO
 from datetime import datetime
@@ -713,4 +713,5 @@ st.markdown("""
 
 # --- panggil hanya saat dieksekusi langsung oleh streamlit ---
 if __name__ == "__main__":
+
     main()
